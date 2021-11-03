@@ -160,7 +160,7 @@ def main():
 	lastVersion = parser.HTMLDATA[-1]
 	
 	urlpost15 = url + lastVersion + '/packages/com.vmware.fusion.tools.darwin.zip.tar'
-	urlpre15 = url + lastVersion + parser.HTMLDATA[-1] + '/packages/com.vmware.fusion.tools.darwinPre15.zip.tar'
+	urlpre15 = url + lastVersion + '/packages/com.vmware.fusion.tools.darwinPre15.zip.tar'
 	parser.clean()
 
 	# Download the darwin.iso tgz file
@@ -189,8 +189,23 @@ def main():
 				# Python 2 code in this block
 				(f,headers)=MyURLopener().retrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
 		except:
-			print('Couldn\'t find tools')
-			return
+			# No tools found, get them from the x86 core tar
+			print('Tools aren\'t here... Be patient while I download and' +
+				' give a look into the x86.core.vmware.fusion.tar file')
+			urlcoretar = url + lastVersion + '/' + '/x86/core/com.vmware.fusion.zip.tar'
+			print('Retrieving Darwin tools from: ' + urlcoretar)	
+
+			# Get the main core file
+			try:
+				if sys.version_info > (3, 0):
+					# Python 3 code in this block
+					urlretrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
+				else:
+					# Python 2 code in this block
+					(f,headers)=MyURLopener().retrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
+			except:
+				print('Couldn\'t find tools')
+				return
 			
 		print()
 		
