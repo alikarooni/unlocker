@@ -192,7 +192,7 @@ def main():
 			# No tools found, get them from the x86 core tar
 			print('Tools aren\'t here... Be patient while I download and' +
 				' give a look into the x86.core.vmware.fusion.tar file')
-			urlcoretar = url + lastVersion + '/' + '/x86/core/com.vmware.fusion.zip.tar'
+			urlcoretar = url + lastVersion + '/x86/core/com.vmware.fusion.zip.tar'
 			print('Retrieving Darwin tools from: ' + urlcoretar)	
 
 			# Get the main core file
