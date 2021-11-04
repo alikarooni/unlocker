@@ -88,7 +88,7 @@ def reporthook(count, block_size, total_size):
 	speed = int(progress_size / (1024 * duration)) if duration>0 else 0
 	percent = min(int(count*block_size*100/total_size),100)
 	time_remaining = ((total_size - progress_size)/1024) / speed if speed > 0 else 0
-	sys.stdout.write("\r...%d%%, %d MB, %d KB/s, %d seconds remaining" %
+	sys.stdout.write("\r...%d%%, %d MB, %d KB/s, %d seconds remaining   " %
 					(percent, progress_size / (1024 * 1024), speed, time_remaining))
 	sys.stdout.flush()
 
