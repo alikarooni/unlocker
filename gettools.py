@@ -75,7 +75,7 @@ else:
 		http_error_default = urllib.URLopener.http_error_default
 
 def convertpath(path):
-    # OS path separator replacement funciton
+    # OS path separator replacement function
     return path.replace(os.path.sep, '/')
 
 def reporthook(count, block_size, total_size):
@@ -121,7 +121,7 @@ def main():
 		sys.stderr.write('You need Python 2.7 or later\n')
 		sys.exit(1)
 
-	dest = os.path.dirname(os.path.abspath(__file__))
+	dest = os.getcwd()
 
 	# Try local file check
 	if(CheckToolsFilesExists(dest)):
