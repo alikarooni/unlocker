@@ -34,13 +34,13 @@ taskkill /F /IM vmware-tray.exe > NUL 2>&1
 
 echo.
 echo Backing up files...
-rd /s /q .\backup > NUL 2>&1
-mkdir .\backup
-mkdir .\backup\x64
-xcopy /F /Y "%InstallPath%x64\vmware-vmx.exe" .\backup\x64
-xcopy /F /Y "%InstallPath%x64\vmware-vmx-debug.exe" .\backup\x64
-xcopy /F /Y "%InstallPath%x64\vmware-vmx-stats.exe" .\backup\x64
-xcopy /F /Y "%InstallPath%vmwarebase.dll" .\backup\
+rd /s /q .\backup-windows > NUL 2>&1
+mkdir .\backup-windows
+mkdir .\backup-windows\x64
+xcopy /F /Y "%InstallPath%x64\vmware-vmx.exe" .\backup-windows\x64
+xcopy /F /Y "%InstallPath%x64\vmware-vmx-debug.exe" .\backup-windows\x64
+xcopy /F /Y "%InstallPath%x64\vmware-vmx-stats.exe" .\backup-windows\x64
+xcopy /F /Y "%InstallPath%vmwarebase.dll" .\backup-windows\
 
 echo.
 echo Patching...

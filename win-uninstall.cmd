@@ -31,13 +31,13 @@ taskkill /F /IM vmware-tray.exe > NUL 2>&1
 
 echo.
 echo Restoring files...
-xcopy /F /Y .\backup\x64\*.* "%InstallPath%x64\"
-xcopy /F /Y .\backup\*.* "%InstallPath%"
+xcopy /F /Y .\backup-windows\x64\*.* "%InstallPath%x64\"
+xcopy /F /Y .\backup-windows\*.* "%InstallPath%"
 del /f "%InstallPath%"darwin*.*
 
 echo.
 echo Removing backup files...
-rd /s /q .\backup > NUL 2>&1
+rd /s /q .\backup-windows > NUL 2>&1
 rd /s /q .\tools > NUL 2>&1
 
 echo.

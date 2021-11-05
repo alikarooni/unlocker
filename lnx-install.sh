@@ -14,23 +14,33 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-echo Creating backup folder...
-rm -rf ./backup
-mkdir -p "./backup"
-cp -v /usr/lib/vmware/bin/vmware-vmx ./backup/
-cp -v /usr/lib/vmware/bin/vmware-vmx-debug ./backup/
-cp -v /usr/lib/vmware/bin/vmware-vmx-stats ./backup/
+echo Creating backup-linux folder...
+rm -rf ./backup-linux
+mkdir -p "./backup-linux"
+cp -v /usr/lib/vmware/bin/vmware-vmx ./backup-linux/
+cp -v /usr/lib/vmware/bin/vmware-vmx-debug ./backup-linux/
+cp -v /usr/lib/vmware/bin/vmware-vmx-stats ./backup-linux/
 if [ -d /usr/lib/vmware/lib/libvmwarebase.so.0/ ]; then
-    cp -v /usr/lib/vmware/lib/libvmwarebase.so.0/libvmwarebase.so.0 ./backup/
+    cp -v /usr/lib/vmware/lib/libvmwarebase.so.0/libvmwarebase.so.0 ./backup-linux/
 elif [ -d /usr/lib/vmware/lib/libvmwarebase.so/ ]; then
-    cp -v /usr/lib/vmware/lib/libvmwarebase.so/libvmwarebase.so ./backup/
+    cp -v /usr/lib/vmware/lib/libvmwarebase.so/libvmwarebase.so ./backup-linux/
+fi
+
+pyversion=""
+if command -v python &> /dev/null; then
+    pyversion="python"
+elif command -v python3 &> /dev/null; then
+    pyversion="python3"
+else
+    echo "python could not be found"
+    exit
 fi
 
 echo Patching...
-python ./unlocker.py
+$pyversion ./unlocker.py
 
 echo Getting VMware Tools...
-python gettools.py
+$pyversion gettools.py
 cp ./tools/darwin*.* /usr/lib/vmware/isoimages/
 
 echo Finished!

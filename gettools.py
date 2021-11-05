@@ -130,7 +130,10 @@ def main():
 
 	# Re-create the tools folder
 	shutil.rmtree(dest + '/tools', True)
-	os.mkdir(dest + '/tools')
+	try:
+		os.mkdir(dest + '/tools')
+	except :
+	    pass
 
 	parser = CDSParser()
 

@@ -15,17 +15,17 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 echo Restoring files...
-cp -v ./backup/vmware-vmx  /usr/lib/vmware/bin/
-cp -v ./backup/vmware-vmx-debug /usr/lib/vmware/bin/
-cp -v ./backup/vmware-vmx-stats /usr/lib/vmware/bin/
+cp -v ./backup-linux/vmware-vmx  /usr/lib/vmware/bin/
+cp -v ./backup-linux/vmware-vmx-debug /usr/lib/vmware/bin/
+cp -v ./backup-linux/vmware-vmx-stats /usr/lib/vmware/bin/
 if [ -d /usr/lib/vmware/lib/libvmwarebase.so.0/ ]; then
-    cp -v ./backup/libvmwarebase.so.0 /usr/lib/vmware/lib/libvmwarebase.so.0/
+    cp -v ./backup-linux/libvmwarebase.so.0 /usr/lib/vmware/lib/libvmwarebase.so.0/
 elif [ -d /usr/lib/vmware/lib/libvmwarebase.so/ ]; then
-    cp -v ./backup/libvmwarebase.so /usr/lib/vmware/lib/libvmwarebase.so/
+    cp -v ./backup-linux/libvmwarebase.so /usr/lib/vmware/lib/libvmwarebase.so/
 fi
 
 echo Removing backup files...
-rm -rf ./backup
+rm -rf ./backup-linux
 rm -rf ./tools
 rm -f /usr/lib/vmware/isoimages/darwin*.*
 
