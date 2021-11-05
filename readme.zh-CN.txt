@@ -102,5 +102,6 @@ lnx-update-tools.sh - 检索最新的用于 Mac OS 的 VMWare Tools
 2018/10/10 3.0.2 - 修正了带有 Windows 可执行程序的杀毒软件对本程序的误报
                  - 允许 Python 2 和 3 从 Bash 脚本运行 Python 代码
 2019/10/24 3.0.3 - 修復了適用於VMware Workstation 15.5的解鎖程序和gettools
+2021/11/05 3.0.4 - 用于VMware Workstation 16.2.0 build-18760230的固定gettools并为每个OS +添加分隔备份文件夹
 
 (c) 2011-2018 Dave Parsons

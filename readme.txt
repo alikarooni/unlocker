@@ -114,5 +114,6 @@ History
 10/10/18 3.0.2 - Fixed false positives from anti-virus software with Windows executables
                - Allow Python 2 and 3 to run the Python code from Bash scripts
 10/24/19 3.0.3 - Fixed unlocker and gettools for VMware Workstation 15.5
+11/05/21 3.0.4 - Fixed gettools for VMware Workstation 16.2.0 build-18760230 and add separates backups folders for each OS
 
 (c) 2011-2018 Dave Parsons
