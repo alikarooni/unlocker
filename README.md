@@ -2,21 +2,23 @@ macOS Unlocker V3.0 for VMware Workstation
 ==========================================
 
 **************************************************************
-### <center>READ HERE:</center>
+### <div align="center">READ HERE:</div>
 
 WINDOWS USERS: Get the tool from the Releases section, you will get a bundled python distribution that avoids the virus warnings and python not found etc.
 
 LINUX USERS: No bundled python for you, but make sure you have python 3.0+ installed. If you have errors like "Python not supported" but you have python installed, change the lines inside of lnx-install.sh from 'python xxxxxxx.py' to 'python3.7 xxxxxxx.py' (if you have python 3.7 installed, otherwise try python3 or other stuff)
 
-**************************************************************
-**************************************************************
-
+***
+<table align="center"><tr><td align="center" width="9999">
 
 | IMPORTANT:
 | ---
 | Always uninstall the previous version of the Unlocker before using a new
 | version. Failure to do this could render VMware unusable.
 
+</td></tr></table>
+
+***
 
 ### 1. Introduction
 ---------------
@@ -61,13 +63,16 @@ If you are using VMware Player or Workstation on Windows you may get a core dump
 
 Latest Linux products are OK and do not show this problem.
 
+<table align="center"><tr><td align="center" width="9999">
+   
 | IMPORTANT:
 | ---
 | If you create a new VM VMware may stop and create a core dump.
 | There are two options to work around this issue:
 | 1. Change the VM to be HW 10 - this does not affect performance.
 | 2. Edit the VMX file and add:<br/>smc.version = "0"
-
+   
+</td></tr></table>
 
 ### 4. Windows
 ----------
