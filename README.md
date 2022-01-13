@@ -65,7 +65,6 @@ Latest Linux products are OK and do not show this problem.
 | ---
 | If you create a new VM VMware may stop and create a core dump.
 | There are two options to work around this issue:
-|
 | 1. Change the VM to be HW 10 - this does not affect performance.
 | 2. Edit the VMX file and add:<br/>smc.version = "0"
 
