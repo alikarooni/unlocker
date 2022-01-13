@@ -61,14 +61,13 @@ If you are using VMware Player or Workstation on Windows you may get a core dump
 
 Latest Linux products are OK and do not show this problem.
 
-| IMPORTANT:                                                                  |
-| ==========                                                                  |
-| --- |
-| If you create a new VM VMware may stop and create a core dump.              |
-| There are two options to work around this issue:                            |
-|                                                                             |
-| 1. Change the VM to be HW 10 - this does not affect performance.            |
-| 2. Edit the VMX file and add:<br/>smc.version = "0"                                                        |
+| IMPORTANT:
+| ---
+| If you create a new VM VMware may stop and create a core dump.
+| There are two options to work around this issue:
+|
+| 1. Change the VM to be HW 10 - this does not affect performance.
+| 2. Edit the VMX file and add:<br/>smc.version = "0"
 
 
 ### 4. Windows
