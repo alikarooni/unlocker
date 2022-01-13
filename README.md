@@ -1,7 +1,7 @@
 macOS Unlocker V3.0 for VMware Workstation
 ==========================================
 
-**************************************************************
+***
 ### <div align="center">READ HERE:</div>
 
 WINDOWS USERS: Get the tool from the Releases section, you will get a bundled python distribution that avoids the virus warnings and python not found etc.
