@@ -11,14 +11,12 @@ LINUX USERS: No bundled python for you, but make sure you have python 3.0+ insta
 **************************************************************
 **************************************************************
 
-+-----------------------------------------------------------------------------+
-| IMPORTANT:                                                                  |
-| ==========                                                                  |
-|                                                                             |
-| Always uninstall the previous version of the Unlocker before using a new    |
-| version. Failure to do this could render VMware unusable.                   |
-|                                                                             |
-+-----------------------------------------------------------------------------+
+
+| IMPORTANT:
+| ---
+| Always uninstall the previous version of the Unlocker before using a new
+| version. Failure to do this could render VMware unusable.
+
 
 ### 1. Introduction
 ---------------
@@ -63,17 +61,15 @@ If you are using VMware Player or Workstation on Windows you may get a core dump
 
 Latest Linux products are OK and do not show this problem.
 
-+-----------------------------------------------------------------------------+
 | IMPORTANT:                                                                  |
 | ==========                                                                  |
-|                                                                             |
+| --- |
 | If you create a new VM VMware may stop and create a core dump.              |
 | There are two options to work around this issue:                            |
 |                                                                             |
 | 1. Change the VM to be HW 10 - this does not affect performance.            |
 | 2. Edit the VMX file and add:<br/>smc.version = "0"                                                        |
-|                                                                             |
-+-----------------------------------------------------------------------------+
+
 
 ### 4. Windows
 ----------
@@ -108,6 +104,7 @@ modified the unlocker code to run on Python 3 in the ESXi 6.5 environment.
 
 History
 -------
+
 | Date | Release | Description
 | --- | ---
 | 27/09/2018 | 3.0.0 | First release
