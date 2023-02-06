@@ -102,5 +102,6 @@ Windows 版本的 Unlocker 有一个使用 PyInstaller 的打包版 Python 脚�
 | 2019/10/24 | 3.0.3 | 修復了適用於VMware Workstation 15.5的解鎖程序和gettools
 | 2021/11/05 | 3.0.4 | 用于VMware Workstation 16.2.0 build-18760230的固定gettools并为每个OS +添加分隔备份文件夹
 | 15/12/2022 | 3.0.5 | 的固定 gettools 用于 VMware Workstation 17.0.0 Build-20800274
+| 06/02/2023 | 3.0.6 | 的固定 gettools 用于 VMware Workstation 17.0.1 Build-21139696
 
 (c) 2011-2018 Dave Parsons
