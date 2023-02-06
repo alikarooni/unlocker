@@ -162,135 +162,59 @@ def main():
 	
 	lastVersion = parser.HTMLDATA[-1]
 	
-	urlpost15 = url + lastVersion + '/packages/com.vmware.fusion.tools.darwin.zip.tar'
-	urlpre15 = url + lastVersion + '/packages/com.vmware.fusion.tools.darwinPre15.zip.tar'
+	fromLocal = '/universal/core/'
+	zipName = 'com.vmware.fusion.zip'
+	tarName = zipName + '.tar'
+	urlpost15 = url + lastVersion + fromLocal + tarName
 	parser.clean()
 
-	# Download the darwin.iso tgz file
+	# Download the darwin.iso tar file
 	print('Retrieving Darwin tools from: ' + urlpost15)
 	try:
 		# Try to get tools from packages folder
 		if sys.version_info > (3, 0):
 			# Python 3 code in this block
-			urlretrieve(urlpost15, convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip.tar'), reporthook)
+			urlretrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
 		else:
 			# Python 2 code in this block
-			(f,headers)=MyURLopener().retrieve(urlpost15, convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip.tar'), reporthook)
+			(f,headers)=MyURLopener().retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
 	except:
-		# No tools found, get them from the core tar
-		print('Tools aren\'t here... Be patient while I download and' +
-			  ' give a look into the core.vmware.fusion.tar file')
-		urlcoretar = url + lastVersion + '/core/com.vmware.fusion.zip.tar'
-		print('Retrieving Darwin tools from: ' + urlcoretar)	
-
-		# Get the main core file
-		try:
-			if sys.version_info > (3, 0):
-				# Python 3 code in this block
-				urlretrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
-			else:
-				# Python 2 code in this block
-				(f,headers)=MyURLopener().retrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
-		except:
-			# No tools found, get them from the x86 core tar
-			print('Tools aren\'t here... Be patient while I download and' +
-				' give a look into the x86.core.vmware.fusion.tar file')
-			urlcoretar = url + lastVersion + '/x86/core/com.vmware.fusion.zip.tar'
-			print('Retrieving Darwin tools from: ' + urlcoretar)	
-
-			# Get the main core file
-			try:
-				if sys.version_info > (3, 0):
-					# Python 3 code in this block
-					urlretrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
-				else:
-					# Python 2 code in this block
-					(f,headers)=MyURLopener().retrieve(urlcoretar, convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), reporthook)
-			except:
-				print('Couldn\'t find tools')
-				return
-			
-		print()
-		
-		print('Extracting com.vmware.fusion.zip.tar...')
-		tar = tarfile.open(convertpath(dest + '/tools/com.vmware.fusion.zip.tar'), 'r')
-		tar.extract('com.vmware.fusion.zip', path=convertpath(dest + '/tools/'))
-		tar.close()
-		
-		print('Extracting files from com.vmware.fusion.zip...')
-		cdszip = zipfile.ZipFile(convertpath(dest + '/tools/com.vmware.fusion.zip'), 'r')
-
-		isoPath = ''
-		if 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/' in cdszip.namelist():
-			isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/'
-		else:
-			isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/'
-
-		cdszip.extract(isoPath + 'darwin.iso', path=convertpath(dest + '/tools/'))
-		cdszip.extract(isoPath + 'darwinPre15.iso', path=convertpath(dest + '/tools/'))
-		cdszip.close()
-		
-		# Move the iso and sig files to tools folder
-		shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
-		shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwinPre15.iso'), convertpath(dest + '/tools/darwinPre15.iso'))
-		
-		# Cleanup working files and folders
-		shutil.rmtree(convertpath(dest + '/tools/payload'), True)
-		os.remove(convertpath(dest + '/tools/com.vmware.fusion.zip.tar'))
-		os.remove(convertpath(dest + '/tools/com.vmware.fusion.zip'))
-		
-		print('Tools from core retrieved successfully')
+		print('Couldn\'t find tools')
 		return
-
-	# Tools have been found in the packages folder, go with the normal way
-	
+			
+	print()
+		
 	# Extract the tar to zip
-	tar = tarfile.open(convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip.tar'), 'r')
-	tar.extract('com.vmware.fusion.tools.darwin.zip', path=convertpath(dest + '/tools/'))
+	print('Extracting ' + tarName + '...')
+	tar = tarfile.open(convertpath(dest + '/tools/' + tarName), 'r')
+	tar.extract(zipName, path=convertpath(dest + '/tools/'))
 	tar.close()
+		
+	# Extract files from zip
+	print('Extracting files from ' + zipName + '...')
+	cdszip = zipfile.ZipFile(convertpath(dest + '/tools/' + zipName), 'r')
 
-	# Extract the iso and sig files from zip
-	cdszip = zipfile.ZipFile(convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip'), 'r')
-	cdszip.extract('payload/darwin.iso', path=convertpath(dest + '/tools/'))
-	cdszip.extract('payload/darwin.iso.sig', path=convertpath(dest + '/tools/'))
+	# Query where the iso files resides
+	isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/'
+	if not (isoPath in cdszip.namelist()):
+		isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/'
+
+	# Extract the iso files from zip
+	cdszip.extract(isoPath + 'darwin.iso', path=convertpath(dest + '/tools/'))
+	cdszip.extract(isoPath + 'darwinPre15.iso', path=convertpath(dest + '/tools/'))
 	cdszip.close()
-
-	# Move the iso and sig files to tools folder
-	shutil.move(convertpath(dest + '/tools/payload/darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
-	shutil.move(convertpath(dest + '/tools/payload/darwin.iso.sig'), convertpath(dest + '/tools/darwin.iso.sig'))
-
+		
+	# Move the iso files to tools folder
+	shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
+	shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwinPre15.iso'), convertpath(dest + '/tools/darwinPre15.iso'))
+		
 	# Cleanup working files and folders
 	shutil.rmtree(convertpath(dest + '/tools/payload'), True)
-	os.remove(convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip.tar'))
-	os.remove(convertpath(dest + '/tools/com.vmware.fusion.tools.darwin.zip'))
-
-	# Download the darwinPre15.iso tgz file
-	print('Retrieving DarwinPre15 tools from: ' + urlpre15)
-	urlretrieve(urlpre15, convertpath(dest + '/tools/com.vmware.fusion.tools.darwinPre15.zip.tar'))
-
-	# Extract the tar to zip
-	tar = tarfile.open(convertpath(dest + '/tools/com.vmware.fusion.tools.darwinPre15.zip.tar'), 'r')
-	tar.extract('com.vmware.fusion.tools.darwinPre15.zip', path=convertpath(dest + '/tools/'))
-	tar.close()
-
-	# Extract the iso and sig files from zip
-	cdszip = zipfile.ZipFile(convertpath(dest + '/tools/com.vmware.fusion.tools.darwinPre15.zip'), 'r')
-	cdszip.extract('payload/darwinPre15.iso', path=convertpath(dest + '/tools/'))
-	cdszip.extract('payload/darwinPre15.iso.sig', path=convertpath(dest + '/tools/'))
-	cdszip.close()
-
-	# Move the iso and sig files to tools folder
-	shutil.move(convertpath(dest + '/tools/payload/darwinPre15.iso'),
-				convertpath(dest + '/tools/darwinPre15.iso'))
-	shutil.move(convertpath(dest + '/tools/payload/darwinPre15.iso.sig'),
-				convertpath(dest + '/tools/darwinPre15.iso.sig'))
-
-	# Cleanup working files and folders
-	shutil.rmtree(convertpath(dest + '/tools/payload'), True)
-	os.remove(convertpath(dest + '/tools/com.vmware.fusion.tools.darwinPre15.zip.tar'))
-	os.remove(convertpath(dest + '/tools/com.vmware.fusion.tools.darwinPre15.zip'))
-
-	print('Tools from package retrieved successfully')
+	os.remove(convertpath(dest + '/tools/' + tarName))
+	os.remove(convertpath(dest + '/tools/' + zipName))
+		
+	print('Tools from core retrieved successfully')
+	return
 
 if __name__ == '__main__':
     main()
