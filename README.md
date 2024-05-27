@@ -117,5 +117,6 @@ History
 | 11/05/2021 | 3.0.4 | Fixed gettools for VMware Workstation 16.2.0 build-18760230 and add separates backups folders for each OS
 | 15/12/2022 | 3.0.5 | Fixed gettools for VMware Workstation 17.0.0 build-20800274
 | 06/02/2023 | 3.0.6 | Fixed gettools for VMware Workstation 17.0.1 build-21139696
+| 27/05/2024 | 3.0.7 | Fixed gettools for HTTP Error 403: Forbidden
 
 (c) 2011-2018 Dave Parsons
