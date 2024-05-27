@@ -40,6 +40,8 @@ try:
     from html.parser import HTMLParser
     # noinspection PyCompatibility
     from urllib.request import urlretrieve
+    # noinspection PyCompatibility
+    from urllib.request import install_opener
 except ImportError:
     # Fall back to Python 2
     # noinspection PyCompatibility
@@ -68,153 +70,178 @@ class CDSParser(HTMLParser):
 
 if sys.version_info > (3, 0):
 # Python 3 code in this block
-	pass
+    pass
 else:
-	# Python 2 code in this block
-	class MyURLopener(urllib.FancyURLopener):
-		http_error_default = urllib.URLopener.http_error_default
+    # Python 2 code in this block
+    class MyURLopener(urllib.FancyURLopener):
+        http_error_default = urllib.URLopener.http_error_default
 
 def convertpath(path):
     # OS path separator replacement function
     return path.replace(os.path.sep, '/')
 
 def reporthook(count, block_size, total_size):
-	global start_time
-	if count == 0:
-		start_time = time.time()
-		return
-	duration = time.time() - start_time
-	progress_size = int(count * block_size)
-	speed = int(progress_size / (1024 * duration)) if duration>0 else 0
-	percent = min(int(count*block_size*100/total_size),100)
-	time_remaining = ((total_size - progress_size)/1024) / speed if speed > 0 else 0
-	sys.stdout.write("\r...%d%%, %d MB, %d KB/s, %d seconds remaining   " %
-					(percent, progress_size / (1024 * 1024), speed, time_remaining))
-	sys.stdout.flush()
+    global start_time
+    if count == 0:
+        start_time = time.time()
+        return
+    duration = time.time() - start_time
+    progress_size = int(count * block_size)
+    speed = int(progress_size / (1024 * duration)) if duration>0 else 0
+    percent = min(int(count*block_size*100/total_size),100)
+    time_remaining = ((total_size - progress_size)/1024) / speed if speed > 0 else 0
+    sys.stdout.write("\r...%d%%, %d MB, %d KB/s, %d seconds remaining   " %
+                    (percent, progress_size / (1024 * 1024), speed, time_remaining))
+    sys.stdout.flush()
 
 def CheckToolsFilesExists(dest):
-	filesFound = os.path.exists(convertpath(dest + '/tools/darwin.iso')) & os.path.exists(convertpath(dest + '/tools/darwinPre15.iso'))
-	askMsg = 'You already have downloaded the tools. Download again?[y/n]'
+    filesFound = os.path.exists(convertpath(dest + '/tools/darwin.iso')) & os.path.exists(convertpath(dest + '/tools/darwinPre15.iso'))
+    askMsg = 'You already have downloaded the tools. Download again?[y/n]'
 
-	if filesFound:
-		while True:
-			# Ask if the user want to download again
-			if sys.version_info > (3, 0):
-			# Python 3 code in this block
-				userResponse = input(askMsg)
-			else:
-				# Python 2 code in this block
-				userResponse = raw_input(askMsg)
-			
-			if str(userResponse).upper() == 'Y':
-				return False
-			elif str(userResponse).upper() == 'N':
-				return True
-			else:
-				print('Must enter y or n. You pressed: ' + str(userResponse).upper())
-	else:
-		return False
+    if filesFound:
+        while True:
+            # Ask if the user want to download again
+            if sys.version_info > (3, 0):
+            # Python 3 code in this block
+                userResponse = input(askMsg)
+            else:
+                # Python 2 code in this block
+                userResponse = raw_input(askMsg)
+            
+            if str(userResponse).upper() == 'Y':
+                return False
+            elif str(userResponse).upper() == 'N':
+                return True
+            else:
+                print('Must enter y or n. You pressed: ' + str(userResponse).upper())
+    else:
+        return False
+
+def GetResponseFromUrl(url):
+    try:
+        # Try to read page
+        if sys.version_info > (3, 0):
+            # Python 3 code in this block
+            req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+            response = urllib.request.urlopen( req )
+            return response
+        else:
+            # Python 2 code in this block
+            req = urllib.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+            response = urllib.urlopen( req )
+            return response
+    except:
+        print('Couldn\'t read page')
+        return False
 
 def main():
-	# Check minimal Python version is 2.7
-	if sys.version_info < (2, 7):
-		sys.stderr.write('You need Python 2.7 or later\n')
-		sys.exit(1)
+    # Check minimal Python version is 2.7
+    if sys.version_info < (2, 7):
+        sys.stderr.write('You need Python 2.7 or later\n')
+        sys.exit(1)
 
-	dest = os.getcwd()
+    dest = os.getcwd()
 
-	# Try local file check
-	if(CheckToolsFilesExists(dest)):
-		# User as already download the tools and chosen not doing again
-		return
+    # Try local file check
+    if(CheckToolsFilesExists(dest)):
+        # User as already download the tools and chosen not doing again
+        return
 
-	# Re-create the tools folder
-	shutil.rmtree(dest + '/tools', True)
-	try:
-		os.mkdir(dest + '/tools')
-	except :
-		pass
+    # Re-create the tools folder
+    shutil.rmtree(dest + '/tools', True)
+    try:
+        os.mkdir(dest + '/tools')
+    except :
+        pass
 
-	parser = CDSParser()
+    parser = CDSParser()
 
-	# Last published version doesn't ship with darwin tools
-	# so in case of error get it from the core.vmware.fusion.tar
-	print('Trying to get tools from the packages folder...')
+    # Last published version doesn't ship with darwin tools
+    # so in case of error get it from the core.vmware.fusion.tar
+    print('Trying to get tools from the packages folder...')
 
-	# Setup secure url and file paths
-	url = 'https://softwareupdate.vmware.com/cds/vmw-desktop/fusion/'
+    # Setup secure url and file paths
+    url = 'https://softwareupdate.vmware.com/cds/vmw-desktop/fusion/'
 
-	# Get the list of Fusion releases
-	# And get the last item in the ul/li tags
-	
-	response = urlopen(url)
-	html = response.read()
-	parser.clean()
-	parser.feed(str(html))
-	url = url + parser.HTMLDATA[-1] + '/'
-	parser.clean()
+    # Get the list of Fusion releases
+    # And get the last item in the ul/li tags
+    response = GetResponseFromUrl(url)
+    if response == False:
+        return
+    html = response.read()
+    parser.clean()
+    parser.feed(str(html))
+    url = url + parser.HTMLDATA[-1] + '/'
+    parser.clean()
 
-	# Open the latest release page
-	# And build file URL
-	response = urlopen(url)
-	html = response.read()
-	parser.feed(str(html))
-	
-	lastVersion = parser.HTMLDATA[-1]
-	
-	fromLocal = '/universal/core/'
-	zipName = 'com.vmware.fusion.zip'
-	tarName = zipName + '.tar'
-	urlpost15 = url + lastVersion + fromLocal + tarName
-	parser.clean()
+    # Open the latest release page
+    # And build file URL
+    response = GetResponseFromUrl(url)
+    if response == False:
+        return
+    html = response.read()
+    parser.feed(str(html))
+    
+    lastVersion = parser.HTMLDATA[-1]
+    
+    fromLocal = '/universal/core/'
+    zipName = 'com.vmware.fusion.zip'
+    tarName = zipName + '.tar'
+    urlpost15 = url + lastVersion + fromLocal + tarName
+    parser.clean()
 
-	# Download the darwin.iso tar file
-	print('Retrieving Darwin tools from: ' + urlpost15)
-	try:
-		# Try to get tools from packages folder
-		if sys.version_info > (3, 0):
-			# Python 3 code in this block
-			urlretrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
-		else:
-			# Python 2 code in this block
-			(f,headers)=MyURLopener().retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
-	except:
-		print('Couldn\'t find tools')
-		return
-			
-	print()
-		
-	# Extract the tar to zip
-	print('Extracting ' + tarName + '...')
-	tar = tarfile.open(convertpath(dest + '/tools/' + tarName), 'r')
-	tar.extract(zipName, path=convertpath(dest + '/tools/'))
-	tar.close()
-		
-	# Extract files from zip
-	print('Extracting files from ' + zipName + '...')
-	cdszip = zipfile.ZipFile(convertpath(dest + '/tools/' + zipName), 'r')
+    # Download the darwin.iso tar file
+    print('Retrieving Darwin tools from: ' + urlpost15)
+    try:
+        # Try to get tools from packages folder
+        if sys.version_info > (3, 0):
+            # Python 3 code in this block
+            opener = urllib.request.build_opener()
+            opener.addheaders = [('User-Agent','Magic Browser')]
+            install_opener(opener)
+            urlretrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
+        else:
+            # Python 2 code in this block
+            opener = MyURLopener()
+            opener.Version = [('User-Agent','Magic Browser')]
+            (f,headers)=opener.retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
+    except:
+        print('Couldn\'t find tools')
+        return
+    
+    print()
+        
+    # Extract the tar to zip
+    print('Extracting ' + tarName + '...')
+    tar = tarfile.open(convertpath(dest + '/tools/' + tarName), 'r')
+    tar.extract(zipName, path=convertpath(dest + '/tools/'))
+    tar.close()
+        
+    # Extract files from zip
+    print('Extracting files from ' + zipName + '...')
+    cdszip = zipfile.ZipFile(convertpath(dest + '/tools/' + zipName), 'r')
 
-	# Query where the iso files resides
-	isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/'
-	if not (isoPath in cdszip.namelist()):
-		isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/'
+    # Query where the iso files resides
+    isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/'
+    if not (isoPath in cdszip.namelist()):
+        isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/'
 
-	# Extract the iso files from zip
-	cdszip.extract(isoPath + 'darwin.iso', path=convertpath(dest + '/tools/'))
-	cdszip.extract(isoPath + 'darwinPre15.iso', path=convertpath(dest + '/tools/'))
-	cdszip.close()
-		
-	# Move the iso files to tools folder
-	shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
-	shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwinPre15.iso'), convertpath(dest + '/tools/darwinPre15.iso'))
-		
-	# Cleanup working files and folders
-	shutil.rmtree(convertpath(dest + '/tools/payload'), True)
-	os.remove(convertpath(dest + '/tools/' + tarName))
-	os.remove(convertpath(dest + '/tools/' + zipName))
-		
-	print('Tools from core retrieved successfully')
-	return
+    # Extract the iso files from zip
+    cdszip.extract(isoPath + 'darwin.iso', path=convertpath(dest + '/tools/'))
+    cdszip.extract(isoPath + 'darwinPre15.iso', path=convertpath(dest + '/tools/'))
+    cdszip.close()
+        
+    # Move the iso files to tools folder
+    shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
+    shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwinPre15.iso'), convertpath(dest + '/tools/darwinPre15.iso'))
+        
+    # Cleanup working files and folders
+    shutil.rmtree(convertpath(dest + '/tools/payload'), True)
+    os.remove(convertpath(dest + '/tools/' + tarName))
+    os.remove(convertpath(dest + '/tools/' + zipName))
+        
+    print('Tools from core retrieved successfully')
+    return
 
 if __name__ == '__main__':
     main()
