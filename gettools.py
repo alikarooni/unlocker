@@ -33,38 +33,40 @@ import time
 import urllib
 
 try:
-    # For Python 3.0 and later
-    # noinspection PyCompatibility
-    from urllib.request import urlopen
-    # noinspection PyCompatibility
-    from html.parser import HTMLParser
-    # noinspection PyCompatibility
-    from urllib.request import urlretrieve
+	# For Python 3.0 and later
+	# noinspection PyCompatibility
+	from urllib.request import urlopen
+	# noinspection PyCompatibility
+	from html.parser import HTMLParser
+	# noinspection PyCompatibility
+	from urllib.request import urlretrieve
+	# noinspection PyCompatibility
+	from urllib.request import install_opener
 except ImportError:
-    # Fall back to Python 2
-    # noinspection PyCompatibility
-    from urllib2 import urlopen
-    # noinspection PyCompatibility
-    from HTMLParser import HTMLParser
+	# Fall back to Python 2
+	# noinspection PyCompatibility
+	from urllib2 import urlopen
+	# noinspection PyCompatibility
+	from HTMLParser import HTMLParser
 
 
 # Parse the Fusion directory page
 class CDSParser(HTMLParser):
 
-    def __init__(self):
-        HTMLParser.__init__(self)
-        self.reset()
-        self.HTMLDATA = []
+	def __init__(self):
+		HTMLParser.__init__(self)
+		self.reset()
+		self.HTMLDATA = []
 
-    def handle_data(self, data):
-        # Build a list of numeric data from any element
-        if data.find("\n") == -1:
-            if data[0].isdigit():
-                self.HTMLDATA.append(data)
-                self.HTMLDATA.sort(key=lambda s: [int(u) for u in s.split('.')])
+	def handle_data(self, data):
+		# Build a list of numeric data from any element
+		if data.find("\n") == -1:
+			if data[0].isdigit():
+				self.HTMLDATA.append(data)
+				self.HTMLDATA.sort(key=lambda s: [int(u) for u in s.split('.')])
 
-    def clean(self):
-        self.HTMLDATA = []
+	def clean(self):
+		self.HTMLDATA = []
 
 if sys.version_info > (3, 0):
 # Python 3 code in this block
@@ -75,8 +77,8 @@ else:
 		http_error_default = urllib.URLopener.http_error_default
 
 def convertpath(path):
-    # OS path separator replacement function
-    return path.replace(os.path.sep, '/')
+	# OS path separator replacement function
+	return path.replace(os.path.sep, '/')
 
 def reporthook(count, block_size, total_size):
 	global start_time
@@ -115,6 +117,23 @@ def CheckToolsFilesExists(dest):
 	else:
 		return False
 
+def GetResponseFromUrl(url):
+	try:
+		# Try to read page
+		if sys.version_info > (3, 0):
+			# Python 3 code in this block
+			req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+			response = urllib.request.urlopen( req )
+			return response
+		else:
+			# Python 2 code in this block
+			req = urllib.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+			response = urllib.urlopen( req )
+			return response
+	except:
+		print('Couldn\'t read page')
+		return False
+
 def main():
 	# Check minimal Python version is 2.7
 	if sys.version_info < (2, 7):
@@ -146,8 +165,9 @@ def main():
 
 	# Get the list of Fusion releases
 	# And get the last item in the ul/li tags
-	
-	response = urlopen(url)
+	response = GetResponseFromUrl(url)
+	if response == False:
+		return
 	html = response.read()
 	parser.clean()
 	parser.feed(str(html))
@@ -156,7 +176,9 @@ def main():
 
 	# Open the latest release page
 	# And build file URL
-	response = urlopen(url)
+	response = GetResponseFromUrl(url)
+	if response == False:
+		return
 	html = response.read()
 	parser.feed(str(html))
 	
@@ -174,14 +196,19 @@ def main():
 		# Try to get tools from packages folder
 		if sys.version_info > (3, 0):
 			# Python 3 code in this block
+			opener = urllib.request.build_opener()
+			opener.addheaders = [('User-Agent','Magic Browser')]
+			install_opener(opener)
 			urlretrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
 		else:
 			# Python 2 code in this block
-			(f,headers)=MyURLopener().retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
+			opener = MyURLopener()
+			opener.Version = [('User-Agent','Magic Browser')]
+			(f,headers)=opener.retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
 	except:
 		print('Couldn\'t find tools')
 		return
-			
+	
 	print()
 		
 	# Extract the tar to zip
@@ -217,4 +244,4 @@ def main():
 	return
 
 if __name__ == '__main__':
-    main()
+	main()
