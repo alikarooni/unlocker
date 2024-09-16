@@ -31,6 +31,7 @@ import tarfile
 import zipfile
 import time
 import urllib
+import requests
 
 try:
     # For Python 3.0 and later
@@ -134,6 +135,18 @@ def GetResponseFromUrl(url):
         print('Couldn\'t read page')
         return False
 
+# Function to download a file
+def DownloadFile(url, filename):
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        with open(filename, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+        print(f"Downloaded: {filename}")
+    else:
+        print(f"Failed to download {filename}, status code: {response.status_code}")
+
 def main():
     # Check minimal Python version is 2.7
     if sys.version_info < (2, 7):
@@ -154,93 +167,21 @@ def main():
     except :
         pass
 
-    parser = CDSParser()
+    base_url = "https://packages-prod.broadcom.com/tools/frozen/darwin/"
+    iso_files = ["darwin.iso", "darwinPre15.iso"]
 
-    # Last published version doesn't ship with darwin tools
-    # so in case of error get it from the core.vmware.fusion.tar
-    print('Trying to get tools from the packages folder...')
+    # Download the darwin.iso and darwinPre15.iso files
+    for iso in iso_files:
+        file_url = base_url + iso
+        DownloadFile(file_url, iso)
 
-    # Setup secure url and file paths
-    url = 'https://softwareupdate.vmware.com/cds/vmw-desktop/fusion/'
-
-    # Get the list of Fusion releases
-    # And get the last item in the ul/li tags
-    response = GetResponseFromUrl(url)
-    if response == False:
-        return
-    html = response.read()
-    parser.clean()
-    parser.feed(str(html))
-    url = url + parser.HTMLDATA[-1] + '/'
-    parser.clean()
-
-    # Open the latest release page
-    # And build file URL
-    response = GetResponseFromUrl(url)
-    if response == False:
-        return
-    html = response.read()
-    parser.feed(str(html))
-    
-    lastVersion = parser.HTMLDATA[-1]
-    
-    fromLocal = '/universal/core/'
-    zipName = 'com.vmware.fusion.zip'
-    tarName = zipName + '.tar'
-    urlpost15 = url + lastVersion + fromLocal + tarName
-    parser.clean()
-
-    # Download the darwin.iso tar file
-    print('Retrieving Darwin tools from: ' + urlpost15)
-    try:
-        # Try to get tools from packages folder
-        if sys.version_info > (3, 0):
-            # Python 3 code in this block
-            opener = urllib.request.build_opener()
-            opener.addheaders = [('User-Agent','Magic Browser')]
-            install_opener(opener)
-            urlretrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
-        else:
-            # Python 2 code in this block
-            opener = MyURLopener()
-            opener.Version = [('User-Agent','Magic Browser')]
-            (f,headers)=opener.retrieve(urlpost15, convertpath(dest + '/tools/' + tarName), reporthook)
-    except:
-        print('Couldn\'t find tools')
-        return
-    
     print()
         
-    # Extract the tar to zip
-    print('Extracting ' + tarName + '...')
-    tar = tarfile.open(convertpath(dest + '/tools/' + tarName), 'r')
-    tar.extract(zipName, path=convertpath(dest + '/tools/'))
-    tar.close()
-        
-    # Extract files from zip
-    print('Extracting files from ' + zipName + '...')
-    cdszip = zipfile.ZipFile(convertpath(dest + '/tools/' + zipName), 'r')
+    # Move the ISO files to the tools folder
+    shutil.move(convertpath(dest + '/' + iso_files[0]), convertpath(dest + '/tools/darwin.iso'))
+    shutil.move(convertpath(dest + '/' + iso_files[1]), convertpath(dest + '/tools/darwinPre15.iso'))
 
-    # Query where the iso files resides
-    isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/x86_x64/'
-    if not (isoPath in cdszip.namelist()):
-        isoPath = 'payload/VMware Fusion.app/Contents/Library/isoimages/'
-
-    # Extract the iso files from zip
-    cdszip.extract(isoPath + 'darwin.iso', path=convertpath(dest + '/tools/'))
-    cdszip.extract(isoPath + 'darwinPre15.iso', path=convertpath(dest + '/tools/'))
-    cdszip.close()
-        
-    # Move the iso files to tools folder
-    shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwin.iso'), convertpath(dest + '/tools/darwin.iso'))
-    shutil.move(convertpath(dest + '/tools/' + isoPath + 'darwinPre15.iso'), convertpath(dest + '/tools/darwinPre15.iso'))
-        
-    # Cleanup working files and folders
-    shutil.rmtree(convertpath(dest + '/tools/payload'), True)
-    os.remove(convertpath(dest + '/tools/' + tarName))
-    os.remove(convertpath(dest + '/tools/' + zipName))
-        
-    print('Tools from core retrieved successfully')
+    print('Tools from frozen retrieved successfully')
     return
 
 if __name__ == '__main__':
