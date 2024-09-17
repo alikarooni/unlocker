@@ -60,29 +60,7 @@ elif [ -d /usr/lib/vmware/lib/libvmwarebase.so/ ]; then
     cp -v /usr/lib/vmware/lib/libvmwarebase.so/libvmwarebase.so ./backup-linux/
 fi
 
-pyversion=""
-pipversion=""
-if command -v python &> /dev/null; then
-    pyversion="python"
-    pipversion="pip"
-elif command -v python3 &> /dev/null; then
-    pyversion="python3"
-    pipversion="pip3"
-else
-    echo "python could not be found"
-    exit
-fi
-
-# Check if pip or pip3 is installed, install if necessary
-if ! command -v $pipversion &> /dev/null; then
-    install_pip $pipversion
-fi
-
-# Check if requests is already installed
-if ! check_requests_installed $pyversion; then
-    # Install requests
-    install_requests $pipversion
-fi
+source ./lnx-check-python.sh
 
 echo Patching...
 $pyversion ./unlocker.py
@@ -92,4 +70,3 @@ $pyversion gettools.py
 cp ./tools/darwin*.* /usr/lib/vmware/isoimages/
 
 echo Finished!
-
