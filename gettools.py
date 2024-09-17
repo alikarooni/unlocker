@@ -175,11 +175,12 @@ def main():
         file_url = base_url + iso
         DownloadFile(file_url, iso)
 
-    print()
-        
     # Move the ISO files to the tools folder
-    shutil.move(convertpath(dest + '/' + iso_files[0]), convertpath(dest + '/tools/darwin.iso'))
-    shutil.move(convertpath(dest + '/' + iso_files[1]), convertpath(dest + '/tools/darwinPre15.iso'))
+    shutil.move(convertpath(dest + '/' + iso_files[0]), convertpath(dest + '/tools/' + iso_files[0]))
+    shutil.move(convertpath(dest + '/' + iso_files[1]), convertpath(dest + '/tools/' + iso_files[1]))
+    print('Move the ISO files to the tools folder')
+
+    print()
 
     print('Tools from frozen retrieved successfully')
     return
