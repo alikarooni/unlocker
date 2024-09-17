@@ -46,7 +46,7 @@ else
     exit 1
 fi
 
-# Export PIP so it's available in other scripts
+# Export pipversion so it's available in other scripts
 export pipversion
 
 # Check if pip or pip3 is installed, install if necessary
