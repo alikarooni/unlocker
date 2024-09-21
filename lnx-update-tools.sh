@@ -15,7 +15,15 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-source ./lnx-check-python.sh
+pyversion=""
+if command -v python &> /dev/null; then
+    pyversion="python"
+elif command -v python3 &> /dev/null; then
+    pyversion="python3"
+else
+    echo "python could not be found"
+    exit
+fi
 
 echo Getting VMware Tools...
 $pyversion gettools.py

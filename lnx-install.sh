@@ -27,7 +27,15 @@ elif [ -d /usr/lib/vmware/lib/libvmwarebase.so/ ]; then
     cp -v /usr/lib/vmware/lib/libvmwarebase.so/libvmwarebase.so ./backup-linux/
 fi
 
-source ./lnx-check-python.sh
+pyversion=""
+if command -v python &> /dev/null; then
+    pyversion="python"
+elif command -v python3 &> /dev/null; then
+    pyversion="python3"
+else
+    echo "python could not be found"
+    exit
+fi
 
 echo Patching...
 $pyversion ./unlocker.py

@@ -30,23 +30,20 @@ import shutil
 import tarfile
 import zipfile
 import time
-import urllib
-import requests
 
 try:
     # For Python 3.0 and later
+    import urllib
     # noinspection PyCompatibility
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request, urlretrieve, install_opener
     # noinspection PyCompatibility
     from html.parser import HTMLParser
-    # noinspection PyCompatibility
-    from urllib.request import urlretrieve
-    # noinspection PyCompatibility
-    from urllib.request import install_opener
 except ImportError:
     # Fall back to Python 2
     # noinspection PyCompatibility
-    from urllib2 import urlopen
+    import urllib2
+    # noinspection PyCompatibility
+    from urllib2 import urlopen, Request
     # noinspection PyCompatibility
     from HTMLParser import HTMLParser
 
@@ -121,31 +118,28 @@ def CheckToolsFilesExists(dest):
 def GetResponseFromUrl(url):
     try:
         # Try to read page
-        if sys.version_info > (3, 0):
-            # Python 3 code in this block
-            req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
-            response = urllib.request.urlopen( req )
-            return response
-        else:
-            # Python 2 code in this block
-            req = urllib.Request(url, headers={'User-Agent' : "Magic Browser"}) 
-            response = urllib.urlopen( req )
-            return response
+        # Add a User-Agent header to the request
+        req = Request(url, headers={'User-Agent' : "Magic Browser"}) 
+        response = urlopen( req )
+        return response
     except:
         print('Couldn\'t read page')
         return False
 
 # Function to download a file
 def DownloadFile(url, filename):
-    response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        with open(filename, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-        print(f"Downloaded: {filename}")
-    else:
-        print(f"Failed to download {filename}, status code: {response.status_code}")
+    try:
+        # Add a User-Agent header to the request
+        request = Request(url, headers={'User-Agent': 'Magic Browser'})
+        response = urlopen(request)
+        # Save the content to a file
+        with open(filename, 'wb') as file:
+            file.write(response.read())
+        
+        print(f"Downloaded {filename}")
+    except Exception as e:
+        print(f"Error downloading {filename}: {e}")
+        return False
 
 def main():
     # Check minimal Python version is 2.7
@@ -167,13 +161,16 @@ def main():
     except :
         pass
 
-    base_url = "https://packages-prod.broadcom.com/tools/frozen/darwin/"
+    # base_url = "https://packages-prod.broadcom.com/tools/frozen/darwin/"
+    base_url = "https://packages.vmware.com/tools/frozen/darwin/"
     iso_files = ["darwin.iso", "darwinPre15.iso"]
 
     # Download the darwin.iso and darwinPre15.iso files
     for iso in iso_files:
         file_url = base_url + iso
-        DownloadFile(file_url, iso)
+        response = DownloadFile(file_url, iso)
+        if response == False:
+            return
 
     # Move the ISO files to the tools folder
     shutil.move(convertpath(dest + '/' + iso_files[0]), convertpath(dest + '/tools/' + iso_files[0]))
