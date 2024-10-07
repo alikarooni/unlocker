@@ -145,6 +145,8 @@ def DownloadFile(url, filename):
 def DownloadAndExtractTarFile(url, dest):
     parser = CDSParser()
 
+    print('Trying to get tools from ' + url)
+
     # Last published version doesn't ship with darwin tools
     # so in case of error get it from the core.vmware.fusion.tar
     print('Trying to get tools from the packages folder...')
@@ -257,7 +259,7 @@ def main():
     url = 'https://softwareupdate.vmware.com/cds/vmw-desktop/fusion/'
 
     response = DownloadAndExtractTarFile(url, dest)
-    if response == False:    
+    if response == False or response == None:    
         base_url = "https://packages-prod.broadcom.com/tools/frozen/darwin/"
         # base_url = "https://packages.vmware.com/tools/frozen/darwin/"
         iso_files = ["darwin.iso", "darwinPre15.iso"]
