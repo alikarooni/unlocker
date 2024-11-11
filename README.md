@@ -118,5 +118,6 @@ History
 | 15/12/2022 | 3.0.5 | Fixed gettools for VMware Workstation 17.0.0 build-20800274
 | 06/02/2023 | 3.0.6 | Fixed gettools for VMware Workstation 17.0.1 build-21139696
 | 27/05/2024 | 3.0.7 | Fixed gettools for HTTP Error 403: Forbidden
+| 11/11/2024 | 3.0.8 | Fixed gettools for File not found darwin
 
 (c) 2011-2018 Dave Parsons
