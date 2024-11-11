@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 echo "Get macOS VMware Tools 3.0.4"
@@ -29,4 +30,3 @@ $pyversion gettools.py
 cp ./tools/darwin*.* /usr/lib/vmware/isoimages/
 
 echo Finished!
-

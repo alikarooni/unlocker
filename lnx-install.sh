@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 echo "Unlocker 3.0.4 for VMware Workstation"
@@ -44,4 +45,3 @@ $pyversion gettools.py
 cp ./tools/darwin*.* /usr/lib/vmware/isoimages/
 
 echo Finished!
-
