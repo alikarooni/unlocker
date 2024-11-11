@@ -104,5 +104,6 @@ Windows 版本的 Unlocker 有一个使用 PyInstaller 的打包版 Python 脚�
 | 15/12/2022 | 3.0.5 | 的固定 gettools 用于 VMware Workstation 17.0.0 Build-20800274
 | 06/02/2023 | 3.0.6 | 的固定 gettools 用于 VMware Workstation 17.0.1 Build-21139696
 | 27/05/2024 | 3.0.7 | 修复了 gettools 的 HTTP 错误 403：禁止
+| 11/11/2024 | 3.0.8 | 修復了達爾文找不到文件的 gettools
 
 (c) 2011-2018 Dave Parsons
