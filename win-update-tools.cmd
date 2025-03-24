@@ -15,7 +15,11 @@ pushd %~dp0
 set KeyName="HKLM\SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation"
 :: delims is a TAB followed by a space
 for /F "tokens=2* delims=	 " %%A in ('REG QUERY %KeyName% /v InstallPath') do set InstallPath=%%B
-echo VMware is installed at: %InstallPath%
+if "%InstallPath%" == "" (
+    echo VMware is not installed
+) else (
+    echo VMware is installed at: %InstallPath%
+)
 
 echo Getting VMware Tools...
 gettools.exe

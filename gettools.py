@@ -147,10 +147,6 @@ def DownloadAndExtractTarFile(url, dest):
 
     print('Trying to get tools from ' + url)
 
-    # Last published version doesn't ship with darwin tools
-    # so in case of error get it from the core.vmware.fusion.tar
-    print('Trying to get tools from the packages folder...')
-
     # Get the list of Fusion releases
     # And get the last item in the ul/li tags
     response = GetResponseFromUrl(url)
@@ -159,6 +155,9 @@ def DownloadAndExtractTarFile(url, dest):
     html = response.read()
     parser.clean()
     parser.feed(str(html))
+    if parser.HTMLDATA.__len__() == 0:
+        print(url + ' is not accessible!')
+        return;
     url = url + parser.HTMLDATA[-1] + '/'
     parser.clean()
 
@@ -171,6 +170,10 @@ def DownloadAndExtractTarFile(url, dest):
     parser.feed(str(html))
 
     lastVersion = parser.HTMLDATA[-1]
+
+    # Last published version doesn't ship with darwin tools
+    # so in case of error get it from the core.vmware.fusion.tar
+    print('Trying to get tools from the packages folder...')
 
     fromLocal = '/universal/core/'
     zipName = 'com.vmware.fusion.zip'
