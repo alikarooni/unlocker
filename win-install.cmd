@@ -22,7 +22,7 @@ if "%InstallPath%" == "" (
     echo VMware is not installed
     exit /b
 ) else (
-    echo VMware is installed at: %InstallPath%
+    echo VMware is installed at: "%InstallPath%"
 )
 for /F "tokens=2* delims=	 " %%A in ('REG QUERY %KeyName% /v ProductVersion') do set ProductVersion=%%B
 echo VMware product version: %ProductVersion%
