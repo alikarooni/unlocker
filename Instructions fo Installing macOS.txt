@@ -1,0 +1,32 @@
+------------------------------------------------------------
+| Instructions fo Installing macOS in VMware, by TechWise   |
+------------------------------------------------------------
+
+1) Download VMware Workstation Pro: https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
+2) Download macOS iso file: https://archive.org/details/macos_iso
+3) Download Unlocker Tool: https://github.com/paolo-projects/auto-unlocker
+4) Download VMware Tools for macOS: https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware+Tools
+
+
+VMX File Patch:
+
+INTEL:
+smbios.reflectHost = "TRUE"
+hw.model = "MacBookPro14,3"
+board-id = "Mac-551B86E5744E2369"
+smc.version = "0"
+
+
+AMD:
+smc.version = "0"
+cpuid.0.eax = "0000:0000:0000:0000:0000:0000:0000:1011"
+cpuid.0.ebx = "0111:0101:0110:1110:0110:0101:0100:0111"
+cpuid.0.ecx = "0110:1100:0110:0101:0111:0100:0110:1110"
+cpuid.0.edx = "0100:1001:0110:0101:0110:1110:0110:1001"
+cpuid.1.eax = "0000:0000:0000:0001:0000:0110:0111:0001"
+cpuid.1.ebx = "0000:0010:0000:0001:0000:1000:0000:0000"
+cpuid.1.ecx = "1000:0010:1001:1000:0010:0010:0000:0011"
+cpuid.1.edx = "0000:0111:1000:1011:1111:1011:1111:1111"
+smbios.reflectHost = "TRUE"
+hw.model = "MacBookPro14,3"
+board-id = "Mac-551B86E5744E2388"
